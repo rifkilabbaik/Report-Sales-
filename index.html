@@ -5,659 +5,280 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Report Per 2 Jam - Labbaik Chicken</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      color: #222;
-    }
-
-    .container {
-      max-width: 700px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    h1, h2, h3 {
-      margin-top: 0;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      margin-bottom: 16px;
-      font-size: 16px;
-    }
-
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      background: #0f766e;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    button.secondary {
-      background: #555;
-    }
-
-    button.danger {
-      background: #b91c1c;
-    }
-
-    .menu-row,
-    .problem-row,
-    .action-row,
-    .target-row {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .menu-row {
-      grid-template-columns: 1fr 160px;
-    }
-
-    .problem-row {
-      grid-template-columns: 1fr 160px;
-    }
-
-    .action-row {
-      grid-template-columns: 1fr;
-    }
-
-    .target-row {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .home-buttons button {
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      margin-top: 25px;
-      margin-bottom: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #0f766e;
-    }
-
-    .small-text {
-      font-size: 13px;
-      color: #666;
-      margin-top: -10px;
-      margin-bottom: 14px;
-    }
-
-    @media (max-width: 600px) {
-      .menu-row,
-      .problem-row,
-      .target-row {
-        grid-template-columns: 1fr;
-      }
-    }
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;padding:0;background:#f5f5f5;color:#222}
+    .container{max-width:700px;margin:auto;padding:20px}
+    .card{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+    h1,h2,h3{margin-top:0}
+    label{display:block;margin-bottom:6px;font-weight:bold}
+    input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin-bottom:16px;font-size:16px}
+    button{width:100%;padding:14px;border:none;border-radius:12px;background:#0f766e;color:#fff;font-size:16px;font-weight:bold;margin-top:10px;cursor:pointer}
+    button.secondary{background:#555}
+    button.danger{background:#b91c1c}
+    .hidden{display:none}
+    .menu-row,.problem-row{display:grid;grid-template-columns:1fr 160px;gap:10px;margin-bottom:12px}
+    .action-row{margin-bottom:12px}
+    .section-title{margin-top:25px;margin-bottom:10px;font-size:18px;font-weight:bold;color:#0f766e}
+    @media(max-width:600px){.menu-row,.problem-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="container">
-
-    <!-- SETUP STORE -->
-    <div id="setupPage" class="card hidden">
-      <h1>Setup Nama Toko</h1>
-
-      <label>Nama Toko :</label>
-      <select id="storeSelect"></select>
-
-      <button onclick="saveStore()">Save</button>
-    </div>
-
-    <!-- HOME -->
-    <div id="homePage" class="card hidden">
-      <h1>Home</h1>
-      <h3 id="storeNameDisplay"></h3>
-
-      <div class="home-buttons">
-        <button onclick="openPage('salesPage')">Input Sales</button>
-        <button onclick="openPage('targetPage')">Setting Target dan Estimasi Sales</button>
-        <button onclick="openPage('menuPage')">Setting 10 Menu Top Sales</button>
-        <button class="danger" onclick="changeStore()">Ganti Nama Toko</button>
-      </div>
-    </div>
-
-    <!-- INPUT SALES -->
-    <div id="salesPage" class="card hidden">
-      <h1>Input Sales</h1>
-
-      <label>Jumlah Crew</label>
-      <input type="text" id="crew" inputmode="numeric" />
-
-      <label>Sales 2 Jam</label>
-      <input type="text" id="sales2Jam" inputmode="numeric" />
-
-      <label>Sales Total</label>
-      <input type="text" id="salesTotal" inputmode="numeric" readonly />
-
-      <label>CU</label>
-      <input type="text" id="cu" inputmode="numeric" />
-
-      <label>Average / Struk</label>
-      <input type="text" id="avgStruk" inputmode="numeric" />
-
-      <div class="section-title">10 Menu Top Sales</div>
-      <div id="menuStatusContainer"></div>
-
-      <div class="section-title">Masalah di Operational</div>
-      <div id="problemContainer"></div>
-
-      <div class="section-title">Tindakan</div>
-      <div id="actionContainer"></div>
-
-      <button onclick="shareTelegram()">Share ke Telegram</button>
-      <button onclick="copyReport()">Salin</button>
-      <button class="secondary" onclick="backHome()">Kembali</button>
-    </div>
-
-    <!-- TARGET -->
-    <div id="targetPage" class="card hidden">
-      <h1>Setting Target dan Estimasi Sales</h1>
-      <div id="targetContainer"></div>
-
-      <button onclick="saveTargets()">Save</button>
-      <button class="secondary" onclick="backHome()">Kembali</button>
-    </div>
-
-    <!-- MENU -->
-    <div id="menuPage" class="card hidden">
-      <h1>Setting 10 Menu Top Sales</h1>
-      <div id="menuContainer"></div>
-
-      <button onclick="saveMenus()">Save</button>
-      <button class="secondary" onclick="backHome()">Kembali</button>
-    </div>
-
-  </div>
-
-  <script>
-    const stores = [
-      'Labbaik Chicken - Cipasir',
-      'Labbaik Chicken - Cileunyi',
-      'Labbaik Chicken - Pandanwangi',
-      'Labbaik Chicken - Jatos',
-      'Labbaik Chicken - Simpang Lima',
-      'Labbaik Chicken - Cimanuk',
-      'Labbaik Chicken - Cikajang',
-      'Labbaik Chicken - Indihiang',
-      'Labbaik Chicken - Siliwangi Tasik',
-      'Labbaik Chicken - Singaparna',
-      'Labbaik Chicken - Bulak Laut',
-      'Labbaik Chicken - Permata Cimahi',
-      'Labbaik Chicken - Cihampelas',
-      'Labbaik Chicken - Margaasih',
-      'Labbaik Chicken - Katapang',
-      'Labbaik Chicken - Gading Tutuka',
-      'Labbaik Chicken - Al Fathu',
-      'Labbaik Chicken - Ciwidey',
-      'Labbaik Chicken - Sukamenak',
-      'Labbaik Chicken - Rancamanyar',
-      'Labbaik Chicken - Baleendah',
-      'Labbaik Chicken - Bojongsoang',
-      'Labbaik Chicken - Antapani',
-      'Labbaik Chicken - Babakan Sari',
-      'Labbaik Chicken - Derwati',
-      'Labbaik Chicken - Gegerkalong',
-      'Labbaik Chicken - Batununggal',
-      'Labbaik Chicken - Sukagalih',
-      'Labbaik Chicken - Sarimanah',
-      'Labbaik Chicken - Tubagus Ismail',
-      'Labbaik Chicken - Ujung Berung',
-      'Labbaik Chicken - Margahayu',
-      'Labbaik Chicken - Banteng',
-      'Labbaik Chicken - Cibaraja',
-      'Labbaik Chicken - Palabuhan Ratu',
-      'Labbaik Chicken - Caringin',
-      'Labbaik Chicken - Cidahu',
-      'Labbaik Chicken - Cimanggu',
-      'Labbaik Chicken - Cibinong',
-      'Labbaik Chicken - Cagar Alam',
-      'Labbaik Chicken - Galuhmas',
-      'Labbaik Chicken - Ahmad Yani',
-      'Labbaik Chicken - Munjul',
-      'Labbaik Chicken - Mega Regency',
-      'Labbaik Chicken - Perumnas Cirebon',
-      'Labbaik Chicken - Perjuangan',
-      'Labbaik Chicken - Sumber',
-      'Labbaik Chicken - Sudirman Indramayu',
-      'Labbaik Chicken - Tegal',
-      'Labbaik Chicken - Majalengka',
-      'Labbaik Chicken - Angkrek',
-      'Labbaik Chicken - Weru',
-      'Labbaik Chicken - Bukit Barisan',
-      'Labbaik Chicken - Rumbai',
-      'Labbaik Chicken - Panam Simpang Satria',
-      'Labbaik Chicken - Bhayangkara',
-      'Labbaik Chicken - Lopang',
-      'Labbaik Chicken - Cipocok',
-      'Labbaik Chicken - Ciwaru',
-      'Labbaik Chicken - Kaligandu',
-      'Labbaik Chicken - Pakupatan',
-      'Labbaik Chicken - Ciruas',
-      'Labbaik Chicken - Pipitan',
-      'Labbaik Chicken - Kragilan',
-      'Labbaik Chicken - Cikande',
-      'Labbaik Chicken - Kasemen',
-      'Labbaik Chicken - Ciracas',
-      'Labbaik Chicken - Legok',
-      'Labbaik Chicken - Kelapa Dua',
-      'Labbaik Chicken - Baros',
-      'Labbaik Chicken - Petir',
-      'Labbaik Chicken - Warung Gunung',
-      'Labbaik Chicken - Multatuli',
-      'Labbaik Chicken - Juanda',
-      'Labbaik Chicken - Ona Siliwangi',
-      'Labbaik Chicken - Gardu Tanjak',
-      'Labbaik Chicken - Majasari',
-      'Labbaik Chicken - Taktakan',
-      'Labbaik Chicken - Pci',
-      'Labbaik Chicken - Taman Cilegon Indah',
-      'Labbaik Chicken - Cibeber',
-      'Labbaik Chicken - Kalitimbang',
-      'Labbaik Chicken - Serdang',
-      'Labbaik Chicken - Waringin',
-      'Labbaik Chicken - Lebak Indah',
-      'Labbaik Chicken - Seneja',
-      'Labbaik Chicken - Anyer',
-      'Labbaik Chicken - Bbs',
-      'Labbaik Chicken - Kramatwatu',
-      'Labbaik Chicken - Warnasari',
-      'Labbaik Chicken - Krenceng',
-      'Labbaik Chicken - Kebon Dalem',
-      'Labbaik Chicken - Jombang',
-      'Labbaik Chicken - Bojonegara',
-      'Labbaik Chicken - Merak',
-      'Labbaik Chicken - Grogol',
-      'Labbaik Chicken - Temu Putih',
-      'Labbaik Chicken - Tegal Cabe',
-      'Labbaik Chicken - Menes',
-      'Labbaik Chicken - Labuan',
-      'Labbaik Chicken - Panimbang'
-    ];
-
-    const storeSelect = document.getElementById('storeSelect');
-
-    stores.forEach(store => {
-      const option = document.createElement('option');
-      option.value = store;
-      option.textContent = store;
-      storeSelect.appendChild(option);
-    });
-
-    function openPage(id) {
-      document.querySelectorAll('.card').forEach(el => el.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
-    }
-
-    function saveStore() {
-      const selected = storeSelect.value;
-
-      if(confirm('Anda yakin ingin menyimpan nama toko ini?')) {
-        localStorage.setItem('storeName', selected);
-        loadHome();
-      }
-    }
-
-    function loadHome() {
-      const store = localStorage.getItem('storeName');
-
-      if(!store) {
-        openPage('setupPage');
-      } else {
-        document.getElementById('storeNameDisplay').textContent = store;
-        openPage('homePage');
-      }
-    }
-
-    function changeStore() {
-      openPage('setupPage');
-    }
-
-    function backHome() {
-      loadHome();
-    }
-
-    function formatNumber(value) {
-      value = value.replace(/\D/g, '');
-      return new Intl.NumberFormat('id-ID').format(value);
-    }
-
-    function parseNumber(value) {
-      return parseInt(value.replace(/\./g, '')) || 0;
-    }
-
-    function applyNumberFormatting(id) {
-      const input = document.getElementById(id);
-
-      input.addEventListener('input', function() {
-        this.value = formatNumber(this.value);
-
-        if(id === 'sales2Jam') {
-          updateSalesTotal();
-        }
-      });
-    }
-
-    function updateSalesTotal() {
-      const current = parseNumber(document.getElementById('sales2Jam').value);
-      const previous = parseInt(localStorage.getItem('lastSales2Jam') || 0);
-      const total = current + previous;
-
-      document.getElementById('salesTotal').value = new Intl.NumberFormat('id-ID').format(total);
-    }
-
-    applyNumberFormatting('crew');
-    applyNumberFormatting('sales2Jam');
-    applyNumberFormatting('cu');
-    applyNumberFormatting('avgStruk');
-
-    function generateTargetInputs() {
-      const container = document.getElementById('targetContainer');
-      const hours = ['02.00','04.00','06.00','08.00','10.00','12.00','14.00','16.00','18.00','20.00','22.00'];
-
-      container.innerHTML = '';
-
-      hours.forEach(hour => {
-        const div = document.createElement('div');
-        div.className = 'card';
-
-        div.innerHTML = `
-          <label>Target Sales Jam ${hour}</label>
-          <input type="text" inputmode="numeric" class="target-input" data-key="target-${hour}">
-
-          <label>Estimasi Per 2 Jamnya</label>
-          <input type="text" inputmode="numeric" class="target-input" data-key="estimasi-${hour}">
-        `;
-
-        container.appendChild(div);
-      });
-
-      document.querySelectorAll('.target-input').forEach(input => {
-        input.addEventListener('input', function() {
-          this.value = formatNumber(this.value);
-        });
-
-        const saved = localStorage.getItem(input.dataset.key);
-        if(saved) input.value = saved;
-      });
-    }
-
-    function saveTargets() {
-      document.querySelectorAll('.target-input').forEach(input => {
-        localStorage.setItem(input.dataset.key, input.value);
-      });
-
-      alert('Target berhasil disimpan');
-    }
-
-    function generateMenuInputs() {
-      const container = document.getElementById('menuContainer');
-      container.innerHTML = '';
-
-      for(let i = 1; i <= 10; i++) {
-        const value = localStorage.getItem('menu-'+i) || '';
-
-        const div = document.createElement('div');
-        div.innerHTML = `
-          <label>Menu ${i}</label>
-          <input type="text" id="menu-${i}" value="${value}">
-        `;
-
-        container.appendChild(div);
-      }
-    }
-
-    function saveMenus() {
-      for(let i = 1; i <= 10; i++) {
-        localStorage.setItem('menu-'+i, document.getElementById('menu-'+i).value);
-      }
-
-      alert('Menu berhasil disimpan');
-      renderMenuStatus();
-    }
-
-    function renderMenuStatus() {
-      const container = document.getElementById('menuStatusContainer');
-      container.innerHTML = '';
-
-      for(let i = 1; i <= 10; i++) {
-        const menu = localStorage.getItem('menu-'+i) || '';
-
-        const row = document.createElement('div');
-        row.className = 'menu-row';
-
-        row.innerHTML = `
-          <input type="text" value="${menu}" readonly>
-          <select>
-            <option>Aman</option>
-            <option>Kurang</option>
-            <option>Habis</option>
-          </select>
-        `;
-
-        container.appendChild(row);
-      }
-    }
-
-    function addProblemRow(value = '') {
-      const container = document.getElementById('problemContainer');
-
-      const row = document.createElement('div');
-      row.className = 'problem-row';
-
-      row.innerHTML = `
-        <input type="text" class="problem-input" value="${value}">
-        <select>
-          <option>On Progress</option>
-          <option>Waiting</option>
-          <option>Finish</option>
-        </select>
-      `;
-
-      container.appendChild(row);
-
-      row.querySelector('.problem-input').addEventListener('input', function() {
-        const rows = document.querySelectorAll('.problem-input');
-        if(rows[rows.length - 1].value.trim() !== '') {
-          addProblemRow();
-        }
-      });
-    }
-
-    function addActionRow(value = '') {
-      const container = document.getElementById('actionContainer');
-
-      const row = document.createElement('div');
-      row.className = 'action-row';
-
-      row.innerHTML = `
-        <input type="text" class="action-input" value="${value}">
-      `;
-
-      container.appendChild(row);
-
-      row.querySelector('.action-input').addEventListener('input', function() {
-        const rows = document.querySelectorAll('.action-input');
-        if(rows[rows.length - 1].value.trim() !== '') {
-          addActionRow();
-        }
-      });
-    }
-
-    addProblemRow();
-    addProblemRow();
-    addProblemRow();
-    addProblemRow();
-
-    addActionRow();
-    addActionRow();
-    addActionRow();
-    addActionRow();
-
-    generateTargetInputs();
-    generateMenuInputs();
-    renderMenuStatus();
-
-    function getCurrentHourKey() {
-      const hour = new Date().getHours();
-      const rounded = Math.ceil(hour / 2) * 2;
-      return String(rounded).padStart(2, '0') + '.00';
-    }
-
-    function generateReport() {
-      const store = localStorage.getItem('storeName') || '-';
-      const now = new Date();
-
-      const tanggal = now.toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-
-      const jam = now.toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-
-      const hourKey = getCurrentHourKey();
-
-      const target = localStorage.getItem('target-'+hourKey) || '-';
-      const estimasi = localStorage.getItem('estimasi-'+hourKey) || '-';
-
-      const menuRows = document.querySelectorAll('#menuStatusContainer .menu-row');
-      let menuText = '';
-
-      menuRows.forEach((row, index) => {
-        const menu = row.querySelector('input').value;
-        const status = row.querySelector('select').value;
-
-        if(menu.trim()) {
-          menuText += `${index+1}. ${menu} [ ${status} ]\n`;
-        }
-      });
-
-      const problemRows = document.querySelectorAll('#problemContainer .problem-row');
-      let problemText = '';
-
-      let p = 1;
-      problemRows.forEach(row => {
-        const text = row.querySelector('input').value;
-        const status = row.querySelector('select').value;
-
-        if(text.trim()) {
-          problemText += `${p}. ${text} [ ${status} ]\n`;
-          p++;
-        }
-      });
-
-      const actionRows = document.querySelectorAll('#actionContainer .action-row');
-      let actionText = '';
-
-      let a = 1;
-      actionRows.forEach(row => {
-        const text = row.querySelector('input').value;
-
-        if(text.trim()) {
-          actionText += `${a}. ${text}\n`;
-          a++;
-        }
-      });
-
-      return `Bismillahirrahmanirrahim
-
-REPORT PER 2 JAM
-
-Store : ${store.replace('Labbaik Chicken - ', '')}
-Tanggal : ${tanggal}
-Jam : ${jam}
-Jumlah Crew : ${document.getElementById('crew').value}
-
-TARGET & REALISASI
-
-Target Sales : ${target}
-Sales 2 Jam : ${document.getElementById('sales2Jam').value}
-Sales Total : ${document.getElementById('salesTotal').value}
-CU : ${document.getElementById('cu').value}
-AVG/Struk : ${document.getElementById('avgStruk').value}
-
-PROYEKSI
-
-Estimasi Sales 2 Jam Berikutnya : ${estimasi}
-
-PREPARATION
-
-${menuText}
-
-MASALAH DI OPERATIONAL STORE
-
-${problemText}
-
-TINDAKAN
-
-${actionText}
-Syukran 🙏`;
-    }
-
-    function copyReport() {
-      const text = generateReport();
-
-      navigator.clipboard.writeText(text);
-      alert('Report berhasil disalin');
-
-      localStorage.setItem('lastSales2Jam', parseNumber(document.getElementById('sales2Jam').value));
-    }
-
-    function shareTelegram() {
-      const text = encodeURIComponent(generateReport());
-
-      localStorage.setItem('lastSales2Jam', parseNumber(document.getElementById('sales2Jam').value));
-
-      window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
-    }
-
-    loadHome();
-  </script>
+<div class="container">
+
+<div id="setupPage" class="card hidden">
+<h1>Setup Nama Toko</h1>
+<label>Nama Toko :</label>
+<select id="storeSelect"></select>
+<button onclick="saveStore()">Save</button>
+<button id="lanjutBtn" class="secondary hidden" onclick="loadHome()">Lanjut</button>
+</div>
+
+<div id="homePage" class="card hidden">
+<h1>Home</h1>
+<h3 id="storeNameDisplay"></h3>
+<button onclick="openPage('salesPage')">Input Sales</button>
+<button onclick="openPage('targetPage')">Setting Target dan Estimasi Sales</button>
+<button onclick="openPage('menuPage')">Setting 10 Menu Top Sales</button>
+<button onclick="shareAppTelegram()">Share Aplikasi ke Telegram</button>
+<button class="danger" onclick="changeStore()">Ganti Nama Toko</button>
+</div>
+
+<div id="salesPage" class="card hidden">
+<h1>Input Sales</h1>
+<label>Jumlah Crew</label>
+<input type="text" id="crew" inputmode="numeric">
+<label>Sales 2 Jam</label>
+<input type="text" id="sales2Jam" inputmode="numeric">
+<label>Sales Total</label>
+<input type="text" id="salesTotal" readonly>
+<label>CU</label>
+<input type="text" id="cu" inputmode="numeric">
+<label>Average / Struk</label>
+<input type="text" id="avgStruk" inputmode="numeric">
+<div class="section-title">10 Menu Top Sales</div>
+<div id="menuStatusContainer"></div>
+<div class="section-title">Masalah di Operational</div>
+<div id="problemContainer"></div>
+<div class="section-title">Tindakan</div>
+<div id="actionContainer"></div>
+<button onclick="shareTelegram()">Share ke Telegram</button>
+<button onclick="copyReport()">Salin</button>
+<button class="secondary" onclick="backHome()">Kembali</button>
+</div>
+
+<div id="targetPage" class="card hidden">
+<h1>Setting Target dan Estimasi Sales</h1>
+<div id="targetContainer"></div>
+<button onclick="saveTargets()">Save</button>
+<button class="secondary" onclick="backHome()">Kembali</button>
+</div>
+
+<div id="menuPage" class="card hidden">
+<h1>Setting 10 Menu Top Sales</h1>
+<div id="menuContainer"></div>
+<button onclick="saveMenus()">Save</button>
+<button class="secondary" onclick="backHome()">Kembali</button>
+</div>
+
+</div>
+
+<script>
+const stores=['Labbaik Chicken - Kaligandu','Labbaik Chicken - Cileunyi','Labbaik Chicken - Banteng','Labbaik Chicken - Panimbang'];
+const storeSelect=document.getElementById('storeSelect');
+stores.forEach(store=>{
+const option=document.createElement('option');
+option.value=store;
+option.textContent=store;
+storeSelect.appendChild(option);
+});
+
+function openPage(id){
+document.querySelectorAll('.card').forEach(el=>el.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+}
+
+function saveStore(){
+const selected=storeSelect.value;
+if(confirm('Anda yakin ingin menyimpan nama toko ini?')){
+localStorage.setItem('storeName',selected);
+document.getElementById('lanjutBtn').classList.remove('hidden');
+alert('Nama toko berhasil disimpan');
+}
+}
+
+function loadHome(){
+const store=localStorage.getItem('storeName');
+if(!store){
+openPage('setupPage');
+}else{
+document.getElementById('storeNameDisplay').textContent=store;
+openPage('homePage');
+}
+}
+
+function changeStore(){
+document.getElementById('lanjutBtn').classList.add('hidden');
+openPage('setupPage');
+}
+
+function backHome(){loadHome()}
+
+function formatNumber(value){
+value=value.replace(/\D/g,'');
+return new Intl.NumberFormat('id-ID').format(value);
+}
+
+function parseNumber(value){
+return parseInt(value.replace(/\./g,''))||0;
+}
+
+['crew','sales2Jam','cu','avgStruk'].forEach(id=>{
+const input=document.getElementById(id);
+input.addEventListener('input',function(){
+this.value=formatNumber(this.value);
+if(id==='sales2Jam')updateSalesTotal();
+});
+});
+
+function updateSalesTotal(){
+const current=parseNumber(document.getElementById('sales2Jam').value);
+const previous=parseInt(localStorage.getItem('lastSales2Jam')||0);
+const total=current+previous;
+document.getElementById('salesTotal').value=new Intl.NumberFormat('id-ID').format(total);
+}
+
+function generateTargetInputs(){
+const hours=['02.00','04.00','06.00','08.00','10.00','12.00','14.00','16.00','18.00','20.00','22.00'];
+const container=document.getElementById('targetContainer');
+hours.forEach(hour=>{
+container.innerHTML+=`<div class='card'><label>Target Sales Jam ${hour}</label><input class='target-input' data-key='target-${hour}' inputmode='numeric'><label>Estimasi Per 2 Jamnya</label><input class='target-input' data-key='estimasi-${hour}' inputmode='numeric'></div>`;
+});
+}
+
+generateTargetInputs();
+
+function saveTargets(){
+document.querySelectorAll('.target-input').forEach(input=>localStorage.setItem(input.dataset.key,input.value));
+alert('Target berhasil disimpan');
+}
+
+function generateMenuInputs(){
+const container=document.getElementById('menuContainer');
+for(let i=1;i<=10;i++){
+container.innerHTML+=`<label>Menu ${i}</label><input type='text' id='menu-${i}'>`;
+}
+}
+
+generateMenuInputs();
+
+function saveMenus(){
+for(let i=1;i<=10;i++){
+localStorage.setItem('menu-'+i,document.getElementById('menu-'+i).value);
+}
+renderMenuStatus();
+alert('Menu berhasil disimpan');
+}
+
+function renderMenuStatus(){
+const container=document.getElementById('menuStatusContainer');
+container.innerHTML='';
+for(let i=1;i<=10;i++){
+const menu=localStorage.getItem('menu-'+i)||'';
+container.innerHTML+=`<div class='menu-row'><input value='${menu}' readonly><select><option>Aman</option><option>Kurang</option><option>Habis</option></select></div>`;
+}
+}
+
+function addProblemRow(){
+const row=document.createElement('div');
+row.className='problem-row';
+row.innerHTML=`<input class='problem-input'><select><option>On Progress</option><option>Waiting</option><option>Finish</option></select>`;
+document.getElementById('problemContainer').appendChild(row);
+row.querySelector('input').addEventListener('input',()=>{
+const rows=document.querySelectorAll('.problem-input');
+if(rows[rows.length-1].value.trim()!=='')addProblemRow();
+});
+}
+
+function addActionRow(){
+const row=document.createElement('div');
+row.className='action-row';
+row.innerHTML=`<input class='action-input'>`;
+document.getElementById('actionContainer').appendChild(row);
+row.querySelector('input').addEventListener('input',()=>{
+const rows=document.querySelectorAll('.action-input');
+if(rows[rows.length-1].value.trim()!=='')addActionRow();
+});
+}
+
+for(let i=0;i<4;i++)addProblemRow();
+for(let i=0;i<4;i++)addActionRow();
+renderMenuStatus();
+
+function getCurrentHourKey(){
+const hour=new Date().getHours();
+const rounded=Math.ceil(hour/2)*2;
+return String(rounded).padStart(2,'0')+'.00';
+}
+
+function generateReport(){
+const store=(localStorage.getItem('storeName')||'-').replace('Labbaik Chicken - ','');
+const now=new Date();
+const tanggal=now.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+const jam=now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+const hourKey=getCurrentHourKey();
+const target=localStorage.getItem('target-'+hourKey)||'-';
+const estimasi=localStorage.getItem('estimasi-'+hourKey)||'-';
+
+let menuText='';
+document.querySelectorAll('#menuStatusContainer .menu-row').forEach((row,index)=>{
+const menu=row.querySelector('input').value;
+const status=row.querySelector('select').value;
+if(menu.trim())menuText+=`${index+1}. ${menu} [ ${status} ]\n`;
+});
+
+let problemText='';
+let p=1;
+document.querySelectorAll('.problem-row').forEach(row=>{
+const text=row.querySelector('input').value;
+const status=row.querySelector('select').value;
+if(text.trim()){
+problemText+=`${p}. ${text} [ ${status} ]\n`;
+p++;
+}
+});
+
+let actionText='';
+let a=1;
+document.querySelectorAll('.action-row').forEach(row=>{
+const text=row.querySelector('input').value;
+if(text.trim()){
+actionText+=`${a}. ${text}\n`;
+a++;
+}
+});
+
+return `Bismillahirrahmanirrahim\n\nREPORT PER 2 JAM\n\nStore : ${store}\nTanggal : ${tanggal}\nJam : ${jam}\nJumlah Crew : ${document.getElementById('crew').value}\n\nTARGET & REALISASI\n\nTarget Sales : ${target}\nSales 2 Jam : ${document.getElementById('sales2Jam').value}\nSales Total : ${document.getElementById('salesTotal').value}\nCU : ${document.getElementById('cu').value}\nAVG/Struk : ${document.getElementById('avgStruk').value}\n\nPROYEKSI\n\nEstimasi Sales 2 Jam Berikutnya : ${estimasi}\n\nPREPARATION\n\n${menuText}\nMASALAH DI OPERATIONAL STORE\n\n${problemText}\nTINDAKAN\n\n${actionText}\nSyukran 🙏`;
+}
+
+function copyReport(){
+const text=generateReport();
+navigator.clipboard.writeText(text);
+alert('Report berhasil disalin');
+localStorage.setItem('lastSales2Jam',parseNumber(document.getElementById('sales2Jam').value));
+}
+
+function shareTelegram(){
+const text=encodeURIComponent(generateReport());
+window.open(`https://t.me/share/url?url=&text=${text}`,'_blank');
+}
+
+function shareAppTelegram(){
+const currentUrl=window.location.href;
+const text=encodeURIComponent('Aplikasi Report Per 2 Jam Labbaik Chicken\n\n'+currentUrl);
+window.open(`https://t.me/share/url?url=&text=${text}`,'_blank');
+}
+
+loadHome();
+</script>
 </body>
 </html>
